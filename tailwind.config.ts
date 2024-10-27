@@ -10,10 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         background: "var(--background)",
+        primary: "var(--primary)",
         foreground: "var(--foreground)",
       },
     },
   },
+  darkMode: "class",
   plugins: [],
 };
 export default config;
