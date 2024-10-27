@@ -12,6 +12,7 @@ const config: Config = {
         background: "var(--background)",
         primary: "var(--primary)",
         foreground: "var(--foreground)",
+        input: "var(--input)",
       },
     },
   },
