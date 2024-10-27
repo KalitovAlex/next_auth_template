@@ -7,9 +7,12 @@ import { AuthFormData, authSchema } from "@/shared/types/auth";
 import { InputField } from "@/components/form/input-field";
 import { AuthFormFields } from "@/shared/enums/auth";
 import { InputTypes } from "@/shared/enums/input";
+import { useAuth } from "../hooks/use-auth";
 
 export function AuthForm() {
   const { message } = App.useApp();
+  const { login, isLoading, error } = useAuth();
+
   const { control, handleSubmit } = useForm<AuthFormData>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -18,9 +21,14 @@ export function AuthForm() {
     },
   });
 
-  const onSubmit = (data: AuthFormData) => {
-    console.log("Success:", data);
-    message.success("Successfully logged in!");
+  const onSubmit = async (data: AuthFormData) => {
+    try {
+      await login(data);
+      message.success("Successfully logged in!");
+    } catch (err) {
+      console.log(err);
+      message.error(error?.message || "Something went wrong!");
+    }
   };
 
   return (
@@ -44,7 +52,13 @@ export function AuthForm() {
           type={InputTypes.PASSWORD}
           required
         />
-        <Button type="primary" htmlType="submit" className="font-bold" block>
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="font-bold"
+          block
+          loading={isLoading}
+        >
           Sign in
         </Button>
       </form>

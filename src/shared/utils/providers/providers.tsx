@@ -1,16 +1,19 @@
 "use client";
 
-import { App, ConfigProvider } from "antd";
+import { PropsWithChildren } from "react";
+import { QueryProvider } from "./query-provider";
 import { ThemeProvider } from "./theme-provider";
-import { messageConfig } from "../components/components-configuration";
-import { theme } from "@/shared/styles/theme";
+import { AuthProvider } from "./auth-provider";
+import { App } from "antd";
 
-export const Providers = ({ children }: { children: React.ReactNode }) => {
+export function Providers({ children }: PropsWithChildren) {
   return (
-    <ThemeProvider>
-      <ConfigProvider theme={theme}>
-        <App message={messageConfig}>{children}</App>
-      </ConfigProvider>
-    </ThemeProvider>
+    <QueryProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <App>{children}</App>
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryProvider>
   );
-};
+}
