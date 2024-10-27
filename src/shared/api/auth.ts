@@ -9,6 +9,10 @@ export const authApi = {
   },
 
   refreshToken: async () => {
+    if (typeof window === "undefined") {
+      throw new Error("Cannot refresh token on server side");
+    }
+
     const refreshToken = localStorage.getItem(JWTEnum.REFRESH_TOKEN);
     if (!refreshToken) {
       throw new Error("No refresh token available");

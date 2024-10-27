@@ -2,15 +2,35 @@
 
 import { PropsWithChildren, useEffect } from "react";
 import { useAuthStore } from "@/shared/store/auth-store";
+import { useRouter } from "next/navigation";
+import { REFRESHTOKENLIVETIME } from "@/shared/constants/auth";
 
 export function AuthProvider({ children }: PropsWithChildren) {
-  const { refreshTokens, isAuthenticated } = useAuthStore();
+  const { refreshTokens, isAuthenticated, logout } = useAuthStore();
+  const router = useRouter();
 
   useEffect(() => {
     if (isAuthenticated) {
-      refreshTokens().catch(() => {});
+      const refreshTokensWithError = async () => {
+        try {
+          await refreshTokens();
+        } catch (error) {
+          console.log(error);
+          await logout();
+          router.push("/auth");
+        }
+      };
+
+      refreshTokensWithError();
+
+      const intervalId = setInterval(
+        refreshTokensWithError,
+        REFRESHTOKENLIVETIME
+      );
+
+      return () => clearInterval(intervalId);
     }
-  }, [isAuthenticated, refreshTokens]);
+  }, [isAuthenticated, refreshTokens, logout, router]);
 
   return <>{children}</>;
 }

@@ -36,13 +36,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     <ThemeContext.Provider value={{ theme, setTheme: toggleTheme }}>
       {children}
       <FloatButton
-        icon={
-          theme === Themes.LIGHT ? (
-            <MoonOutlined className="bg-white/65" />
-          ) : (
-            <SunOutlined className="bg-black/65" />
-          )
-        }
+        icon={theme === Themes.LIGHT ? <MoonOutlined /> : <SunOutlined />}
         onClick={toggleTheme}
         tooltip={theme === Themes.DARK ? ThemeToolTip.DARK : ThemeToolTip.LIGHT}
         type="primary"
