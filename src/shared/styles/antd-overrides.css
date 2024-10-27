@@ -1,0 +1,44 @@
+/* Стили для обычных инпутов */
+.dark .ant-input,
+.dark .ant-input-password,
+.dark .ant-input-number,
+.dark .ant-input-affix-wrapper {
+  background-color: rgb(31 41 55) !important;
+  border-color: rgb(75 85 99) !important;
+  color: white !important;
+}
+
+/* Стили для инпутов с ошибкой */
+.dark .ant-input-status-error,
+.dark .ant-input-affix-wrapper-status-error {
+  background-color: rgb(31 41 55) !important;
+  border-color: rgb(
+    255,
+    60,
+    60
+  ) !important; /* Изменено на красный цвет для ошибок */
+}
+
+/* Стили для hover состояния */
+.dark .ant-input:hover,
+.dark .ant-input-password:hover,
+.dark .ant-input-number:hover,
+.dark .ant-input-affix-wrapper:hover {
+  border-color: var(--primary) !important;
+}
+
+/* Стили для focused состояния */
+.dark .ant-input:focus,
+.dark .ant-input-focused,
+.dark .ant-input-password:focus,
+.dark .ant-input-number:focus,
+.dark .ant-input-affix-wrapper-focused {
+  border-color: var(--primary) !important;
+  box-shadow: none !important;
+}
+
+/* Стили для иконок внутри инпута */
+.dark .ant-input-password-icon,
+.dark .anticon {
+  color: rgb(156 163 175) !important;
+}

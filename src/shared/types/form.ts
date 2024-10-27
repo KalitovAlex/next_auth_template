@@ -1,12 +1,16 @@
+import { ReactNode } from 'react';
 
 export interface InputFieldProps {
-  name: string;
   label: string;
   required?: boolean;
   type?: string;
   placeholder?: string;
-  maxSymbols?: number;
-  minSymbols?: number;
-  initialValue?: string;
   error?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  name?: string;
+  disabled?: boolean;
+  className?: string;
+  children?: ReactNode;
 }

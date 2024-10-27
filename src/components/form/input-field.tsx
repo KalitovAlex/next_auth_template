@@ -1,62 +1,62 @@
+import { Input } from "antd";
+import { InputTypes } from "@/shared/enums/input";
 import { InputFieldProps } from "@/shared/types/form";
-import { Form, Input, InputNumber } from "antd";
-import PhoneInput from "antd-phone-input";
+import { Controller, Control, FieldValues, Path } from "react-hook-form";
 
-export const InputField: React.FC<InputFieldProps> = ({
-  name,
+interface ControlledInputFieldProps<T extends FieldValues>
+  extends Omit<InputFieldProps, "value" | "onChange" | "onBlur"> {
+  control: Control<T>;
+  name: Path<T>;
+}
+
+const BaseInputField = ({
   label,
   required = false,
   type = "text",
-  placeholder,
-  maxSymbols,
-  minSymbols,
-  initialValue,
   error,
-}) => (
-  <Form.Item
-    name={name}
-    label={
-      <span className="font-bold text-sm">
-        <p className="text-black dark:text-white">{label}</p>
-        {required ? <span className="text-red-500 ml-1">*</span> : null}
-      </span>
-    }
-    rules={[{ required, message: `${label} обязателен` }]}
-    validateStatus={error ? "error" : undefined}
-    help={error}
-  >
-    {type === "password" ? (
+  value,
+  onChange,
+  ...props
+}: InputFieldProps) => (
+  <div className="space-y-1">
+    <label className="block text-sm font-bold">
+      <span className="text-black dark:text-white">{label}</span>
+      {required && <span className="text-red-500 ml-1">*</span>}
+    </label>
+
+    {type === InputTypes.PASSWORD ? (
       <Input.Password
-        placeholder={placeholder}
-        maxLength={maxSymbols}
-        defaultValue={initialValue}
-        minLength={minSymbols}
-      />
-    ) : type === "phone" ? (
-      <PhoneInput
-        placeholder={placeholder}
-        enableSearch
-        className="w-full"
-        maxLength={maxSymbols}
-        minLength={minSymbols}
-        defaultValue={initialValue}
-      />
-    ) : type === "number" ? (
-      <InputNumber
-        placeholder={placeholder}
-        className="w-full"
-        maxLength={maxSymbols}
-        minLength={minSymbols}
-        defaultValue={initialValue}
+        value={value}
+        onChange={onChange}
+        status={error ? "error" : undefined}
+        {...props}
       />
     ) : (
       <Input
         type={type}
-        placeholder={placeholder}
-        maxLength={maxSymbols}
-        minLength={minSymbols}
-        defaultValue={initialValue}
+        value={value}
+        onChange={onChange}
+        status={error ? "error" : undefined}
+        {...props}
       />
     )}
-  </Form.Item>
+
+    {error && <p className="text-red-500 text-sm">{error}</p>}
+  </div>
 );
+
+export function InputField<T extends FieldValues>({
+  control,
+  name,
+  ...props
+}: ControlledInputFieldProps<T>) {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => (
+        <BaseInputField {...field} {...props} error={error?.message} />
+      )}
+    />
+  );
+}

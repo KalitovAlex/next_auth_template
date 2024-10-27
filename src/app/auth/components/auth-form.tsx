@@ -1,22 +1,26 @@
 "use client";
 
-import { Button, Form } from "antd";
+import { Button, App } from "antd";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthFormData, authSchema } from "@/shared/types/auth";
 import { InputField } from "@/components/form/input-field";
+import { AuthFormFields } from "@/shared/enums/auth";
+import { InputTypes } from "@/shared/enums/input";
 
 export function AuthForm() {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<AuthFormData>({
+  const { message } = App.useApp();
+  const { control, handleSubmit } = useForm<AuthFormData>({
     resolver: zodResolver(authSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = (data: AuthFormData) => {
     console.log("Success:", data);
+    message.success("Successfully logged in!");
   };
 
   return (
@@ -25,24 +29,25 @@ export function AuthForm() {
         <h2 className="text-3xl font-bold">Sign in to your account</h2>
       </div>
 
-      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-        <InputField
-          label="Username"
-          error={errors.username?.message}
-          {...register("username")}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <InputField<AuthFormData>
+          name="email"
+          control={control}
+          label={AuthFormFields.EMAIL}
+          type="email"
+          required
         />
-        <InputField
-          label="Password"
-          type="password"
-          error={errors.password?.message}
-          {...register("password")}
+        <InputField<AuthFormData>
+          name="password"
+          control={control}
+          label={AuthFormFields.PASSWORD}
+          type={InputTypes.PASSWORD}
+          required
         />
-        <Form.Item>
-          <Button type="primary" className="font-bold" htmlType="submit" block>
-            Sign in
-          </Button>
-        </Form.Item>
-      </Form>
+        <Button type="primary" htmlType="submit" className="font-bold" block>
+          Sign in
+        </Button>
+      </form>
     </div>
   );
 }
