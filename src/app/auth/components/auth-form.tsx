@@ -1,33 +1,38 @@
 "use client";
 
-import { Button, App } from "antd";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthFormData, authSchema } from "@/shared/types/auth";
-import { InputField } from "@/components/form/input-field";
+import { UnifiedForm } from "@/components/form/unified-form";
 import { AuthFormFields } from "@/shared/enums/auth";
 import { InputTypes } from "@/shared/enums/input";
 import { useAuth } from "../hooks/use-auth";
+import { AuthFormData, authSchema } from "@/shared/types/auth";
+import { Button, App } from "antd";
 
 export function AuthForm() {
+  const { login } = useAuth();
   const { message } = App.useApp();
-  const { login, isLoading, error } = useAuth();
 
-  const { control, handleSubmit } = useForm<AuthFormData>({
-    resolver: zodResolver(authSchema),
-    defaultValues: {
-      email: "",
-      password: "",
+  const fields = [
+    {
+      name: "email",
+      label: AuthFormFields.EMAIL,
+      type: InputTypes.TEXT,
+      required: true,
     },
-  });
+    {
+      name: "password",
+      label: AuthFormFields.PASSWORD,
+      type: InputTypes.PASSWORD,
+      required: true,
+    },
+  ];
 
-  const onSubmit = async (data: AuthFormData) => {
+  const handleSubmit = async (data: AuthFormData) => {
     try {
       await login(data);
-      message.success("Successfully logged in!");
-    } catch (err) {
-      console.log(err);
-      message.error(error?.message || "Something went wrong!");
+      message.success("Form submitted successfully!");
+    } catch (error: unknown) {
+      console.error(error);
+      message.error("Something went wrong!");
     }
   };
 
@@ -36,32 +41,20 @@ export function AuthForm() {
       <div className="text-center">
         <h2 className="text-3xl font-bold">Sign in to your account</h2>
       </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <InputField<AuthFormData>
-          name="email"
-          control={control}
-          label={AuthFormFields.EMAIL}
-          type="email"
-          required
-        />
-        <InputField<AuthFormData>
-          name="password"
-          control={control}
-          label={AuthFormFields.PASSWORD}
-          type={InputTypes.PASSWORD}
-          required
-        />
+      <UnifiedForm<AuthFormData>
+        fields={fields}
+        schema={authSchema}
+        onSubmit={handleSubmit}
+      >
         <Button
           type="primary"
           htmlType="submit"
-          className="font-bold"
+          className="font-bold mt-2"
           block
-          loading={isLoading}
         >
           Sign in
         </Button>
-      </form>
+      </UnifiedForm>
     </div>
   );
 }
