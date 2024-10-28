@@ -49,9 +49,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
         style={{
           right: 24,
           bottom: 24,
-          backgroundColor: theme === Themes.LIGHT ? "#000000" : "#ffffff",
         }}
-        type={theme === Themes.LIGHT ? "primary" : "default"}
       />
     </ThemeContext.Provider>
   );

@@ -22,6 +22,7 @@ export function AntdConfigProvider({
           colorBorder: "var(--border)",
           colorError: "var(--error)",
           colorSuccess: "var(--success)",
+          colorLinkHover: "var(--primary-hover)",
           colorWarning: "var(--warning)",
           colorTextBase: "var(--foreground)",
         },
@@ -157,6 +158,15 @@ export function AntdConfigProvider({
           Skeleton: {
             colorFill: "var(--border)",
             colorFillContent: "var(--border)",
+          },
+          FloatButton: {
+            colorFill: "var(--primary)",
+            colorFillContent: "var(--primary)",
+            colorText: "var(--primary-foreground)",
+            colorPrimary: "var(--primary)",
+            colorBgContainer: "var(--primary)",
+            colorPrimaryHover: "var(--primary-hover)",
+            colorBgElevated: "var(--primary)",
           },
         },
         algorithm:
