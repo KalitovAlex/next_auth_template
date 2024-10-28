@@ -1,6 +1,7 @@
 import { InputFieldProps } from "@/shared/types/form";
 import { InputTypes } from "@/shared/enums/input";
 import { Input } from "antd";
+import PhoneInput from "antd-phone-input";
 
 export const BaseInputField = ({
   label,
@@ -21,6 +22,22 @@ export const BaseInputField = ({
       <Input.Password
         value={value}
         onChange={onChange}
+        status={error ? "error" : undefined}
+        {...props}
+      />
+    ) : type === InputTypes.PHONE ? (
+      <PhoneInput
+        value={value}
+        onChange={(phoneValue) => {
+          const phoneString = `${phoneValue.countryCode}${phoneValue.areaCode}${phoneValue.phoneNumber}`;
+          const syntheticEvent = {
+            target: {
+              value: phoneString,
+            },
+          } as React.ChangeEvent<HTMLInputElement>;
+
+          onChange?.(syntheticEvent);
+        }}
         status={error ? "error" : undefined}
         {...props}
       />
