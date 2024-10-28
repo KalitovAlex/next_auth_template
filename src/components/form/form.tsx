@@ -3,16 +3,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputField } from "./input-field";
-import { UnifiedFormProps } from "@/shared/types/form";
+import { FormProps } from "@/shared/types/form";
 import { Path } from "react-hook-form";
 import "@/shared/styles/globals.css";
 
-export function UnifiedForm<T extends Record<string, unknown>>({
+export function Form<T extends Record<string, unknown>>({
   fields,
   schema,
   onSubmit,
   children,
-}: UnifiedFormProps<T>) {
+}: FormProps<T>) {
   const { control, handleSubmit } = useForm<T>({
     resolver: zodResolver(schema),
   });

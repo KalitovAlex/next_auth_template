@@ -24,9 +24,10 @@ export interface FormField {
   required?: boolean;
 }
 
-export interface UnifiedFormProps<T extends Record<string, unknown>> {
+export interface FormProps<T extends Record<string, unknown>> {
   fields: FormField[];
   schema: z.ZodType<T>;
   onSubmit: (data: T) => void;
   children?: ReactNode;
 }
+

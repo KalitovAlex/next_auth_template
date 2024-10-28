@@ -1,12 +1,11 @@
 "use client";
 
-import { UnifiedForm } from "@/components/form/unified-form";
 import { AuthFormFields } from "@/shared/enums/auth";
 import { InputTypes } from "@/shared/enums/input";
 import { useAuth } from "../hooks/use-auth";
 import { AuthFormData, authSchema } from "@/shared/types/auth";
 import { Button, App } from "antd";
-
+import { Form } from "@/components/form/form";
 export function AuthForm() {
   const { login } = useAuth();
   const { message } = App.useApp();
@@ -41,7 +40,7 @@ export function AuthForm() {
       <div className="text-center">
         <h2 className="text-3xl font-bold">Sign in to your account</h2>
       </div>
-      <UnifiedForm<AuthFormData>
+      <Form<AuthFormData>
         fields={fields}
         schema={authSchema}
         onSubmit={handleSubmit}
@@ -54,7 +53,7 @@ export function AuthForm() {
         >
           Sign in
         </Button>
-      </UnifiedForm>
+      </Form>
     </div>
   );
 }

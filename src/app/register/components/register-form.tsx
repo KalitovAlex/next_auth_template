@@ -1,11 +1,11 @@
 "use client";
 
-import { UnifiedForm } from "@/components/form/unified-form";
 import { AuthFormFields } from "@/shared/enums/auth";
 import { InputTypes } from "@/shared/enums/input";
 import { useRegister } from "../hooks/use-register";
 import { RegisterFormData, registerSchema } from "@/shared/types/auth";
 import { Button, App } from "antd";
+import { Form } from "@/components/form/form";
 
 export function RegisterForm() {
   const { register } = useRegister();
@@ -47,7 +47,7 @@ export function RegisterForm() {
       <div className="text-center">
         <h2 className="text-3xl font-bold">Create your account</h2>
       </div>
-      <UnifiedForm<RegisterFormData>
+      <Form<RegisterFormData>
         fields={fields}
         schema={registerSchema}
         onSubmit={handleSubmit}
@@ -60,7 +60,7 @@ export function RegisterForm() {
         >
           Register
         </Button>
-      </UnifiedForm>
+      </Form>
     </div>
   );
 }

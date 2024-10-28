@@ -1,5 +1,5 @@
+import { InputFieldProps } from "../types/form";
 import { Control, FieldValues, Path } from "react-hook-form";
-import { InputFieldProps } from "@/shared/types/form";
 
 export enum InputTypes {
   TEXT = "text",
