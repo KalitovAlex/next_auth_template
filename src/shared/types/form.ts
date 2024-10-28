@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { InputTypes } from "../enums/input";
+import { Control, FieldValues, Path } from "react-hook-form";
 import { z } from "zod";
 
 export interface InputFieldProps {
@@ -31,3 +32,8 @@ export interface FormProps<T extends Record<string, unknown>> {
   children?: ReactNode;
 }
 
+export interface ControlledInputFieldProps<T extends FieldValues>
+  extends Omit<InputFieldProps, "value" | "onChange" | "onBlur"> {
+  control: Control<T>;
+  name: Path<T>;
+}
