@@ -2,12 +2,13 @@
 
 import { AuthFormFields } from "@/shared/enums/auth";
 import { InputTypes } from "@/shared/enums/input";
-import { useAuth } from "../hooks/use-auth";
-import { AuthFormData, authSchema } from "@/shared/types/auth";
+import { useRegister } from "../hooks/use-register";
+import { RegisterFormData, registerSchema } from "@/shared/types/auth";
 import { Button, App } from "antd";
 import { Form } from "@/components/form/form";
-export function AuthForm() {
-  const { login } = useAuth();
+
+export function RegisterForm() {
+  const { register } = useRegister();
   const { message } = App.useApp();
 
   const fields = [
@@ -23,26 +24,32 @@ export function AuthForm() {
       type: InputTypes.PASSWORD,
       required: true,
     },
+    {
+      name: "phone",
+      label: AuthFormFields.PHONE,
+      type: InputTypes.PHONE,
+      required: true,
+    },
   ];
 
-  const handleSubmit = async (data: AuthFormData) => {
+  const handleSubmit = async (data: RegisterFormData) => {
     try {
-      await login(data);
-      message.success("Form submitted successfully!");
+      await register(data);
+      message.success("Registration successful!");
     } catch (error: unknown) {
       console.error(error);
-      message.error("Something went wrong!");
+      message.error("Registration failed!");
     }
   };
 
   return (
     <div className="max-w-md w-full space-y-8 dark:text-white dark:bg-black/10">
       <div className="text-center">
-        <h2 className="text-3xl font-bold">Sign in to your account</h2>
+        <h2 className="text-3xl font-bold">Create your account</h2>
       </div>
-      <Form<AuthFormData>
+      <Form<RegisterFormData>
         fields={fields}
-        schema={authSchema}
+        schema={registerSchema}
         onSubmit={handleSubmit}
       >
         <Button
@@ -51,7 +58,7 @@ export function AuthForm() {
           className="font-bold mt-2"
           block
         >
-          Sign in
+          Register
         </Button>
       </Form>
     </div>

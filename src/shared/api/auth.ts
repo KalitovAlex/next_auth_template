@@ -8,6 +8,11 @@ export const authApi = {
     return response.data;
   },
 
+  register: async (credentials: AuthFormData) => {
+    const response = await apiRequest.post("/auth/signup", credentials);
+    return response.data;
+  },
+
   refreshToken: async () => {
     if (typeof window === "undefined") {
       throw new Error("Cannot refresh token on server side");

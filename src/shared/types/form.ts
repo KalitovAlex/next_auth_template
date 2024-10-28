@@ -1,4 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
+import { InputTypes } from "../enums/input";
+import { Control, FieldValues, Path } from "react-hook-form";
+import { z } from "zod";
 
 export interface InputFieldProps {
   label: string;
@@ -13,4 +16,24 @@ export interface InputFieldProps {
   disabled?: boolean;
   className?: string;
   children?: ReactNode;
+}
+
+export interface FormField {
+  name: string;
+  label: string;
+  type?: InputTypes;
+  required?: boolean;
+}
+
+export interface FormProps<T extends Record<string, unknown>> {
+  fields: FormField[];
+  schema: z.ZodType<T>;
+  onSubmit: (data: T) => void;
+  children?: ReactNode;
+}
+
+export interface ControlledInputFieldProps<T extends FieldValues>
+  extends Omit<InputFieldProps, "value" | "onChange" | "onBlur"> {
+  control: Control<T>;
+  name: Path<T>;
 }

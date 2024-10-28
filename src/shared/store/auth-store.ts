@@ -12,26 +12,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
   isAuthenticated: getInitialAuthState(),
   error: null,
-
-  login: async (credentials) => {
-    try {
-      set({ isLoading: true, error: null });
-      const data = await authApi.login(credentials);
-      if (typeof window !== "undefined") {
-        localStorage.setItem(JWTEnum.REFRESH_TOKEN, data.refreshToken);
-      }
-      await fetch("/api/auth/set-token", {
-        method: "POST",
-        body: JSON.stringify({ token: data.refreshToken }),
-      });
-      set({ isAuthenticated: true });
-    } catch (error) {
-      set({ error: error as Error });
-      throw error;
-    } finally {
-      set({ isLoading: false });
-    }
-  },
+  setIsAuthenticated: (value: boolean) => set({ isAuthenticated: value }),
 
   refreshTokens: async () => {
     try {

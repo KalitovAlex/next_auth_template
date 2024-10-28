@@ -1,36 +1,64 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 :root {
-  --background: #ffffff;
-  --foreground: 218, 8%, 27%;
-
-  --input: #151515;
-
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-
+  /* Основные цвета */
   --primary: #00c1a0;
-  --primary-foreground: 210 40% 98%;
+  --primary-foreground: #ffffff;
+  --primary-hover: #00a890;
 
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
+  --secondary: #6c7281;
+  --secondary-foreground: #ffffff;
+  --secondary-hover: #5a5f6d;
 
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  /* Фоны */
+  --background: #ffffff;
+  --foreground: #151515;
 
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  /* Состояния */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
 
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
+  /* Границы и тени */
+  --border: #e5e7eb;
+  --ring: rgba(0, 193, 160, 0.5);
 
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
+  /* Компоненты */
+  --input-background: #ffffff;
+  --input-border: #d1d5db;
+  --input-ring: rgba(0, 193, 160, 0.2);
 
-  --radius: 0.5rem;
+  --card-background: #ffffff;
+  --card-border: #e5e7eb;
+  --checkbox-foreground: #e5e7eb;
+}
+
+.dark {
+  --primary: #00c1a0;
+  --primary-foreground: #ffffff;
+  --primary-hover: #00a890;
+
+  --secondary: #6c7281;
+  --secondary-foreground: #ffffff;
+  --secondary-hover: #5a5f6d;
+
+  --background: #151515;
+  --foreground: #ffffff;
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+
+  --border: #2e2e2e;
+  --ring: rgba(0, 193, 160, 0.5);
+
+  --input-background: rgb(31 41 55);
+  --input-border: rgb(75 85 99);
+  --input-ring: rgba(0, 193, 160, 0.2);
+
+  --card-background: #1e1e1e;
+  --card-border: #2e2e2e;
+  --checkbox-foreground: #2e2e2e;
 }

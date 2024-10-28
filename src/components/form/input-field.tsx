@@ -1,16 +1,11 @@
-import { InputFieldProps } from "@/shared/types/form";
-import { Controller, Control, FieldValues, Path } from "react-hook-form";
+import { Controller, FieldValues } from "react-hook-form";
 import { BaseInputField } from "../input/base-input-field";
-
-interface ControlledInputFieldProps<T extends FieldValues>
-  extends Omit<InputFieldProps, "value" | "onChange" | "onBlur"> {
-  control: Control<T>;
-  name: Path<T>;
-}
+import { ControlledInputFieldProps } from "@/shared/types/form";
 
 export function InputField<T extends FieldValues>({
   control,
   name,
+  label,
   ...props
 }: ControlledInputFieldProps<T>) {
   return (
@@ -18,7 +13,12 @@ export function InputField<T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <BaseInputField {...field} {...props} error={error?.message} />
+        <BaseInputField
+          {...field}
+          {...props}
+          label={label}
+          error={error?.message}
+        />
       )}
     />
   );
