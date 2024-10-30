@@ -2,9 +2,10 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { FloatButton } from "antd";
-import { SunOutlined, MoonOutlined } from "@ant-design/icons";
+import { Moon, Sun } from "lucide-react";
 import { ThemeContextType } from "@/shared/types/theme";
 import { Themes, ThemeToolTip } from "@/shared/enums/theme";
+import { AntdConfigProvider } from "../components/components-configuration";
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
@@ -34,19 +35,21 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme: toggleTheme }}>
-      {children}
+      <AntdConfigProvider>{children}</AntdConfigProvider>
       <FloatButton
         icon={
           theme === Themes.LIGHT ? (
-            <MoonOutlined className="bg-white/65" />
+            <Moon className="text-white" size={16} />
           ) : (
-            <SunOutlined className="bg-black/65" />
+            <Sun className="text-black" size={16} />
           )
         }
         onClick={toggleTheme}
         tooltip={theme === Themes.DARK ? ThemeToolTip.DARK : ThemeToolTip.LIGHT}
-        type="primary"
-        style={{ right: 24, bottom: 24 }}
+        style={{
+          right: 24,
+          bottom: 24,
+        }}
       />
     </ThemeContext.Provider>
   );
