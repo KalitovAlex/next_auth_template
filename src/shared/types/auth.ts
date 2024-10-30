@@ -1,20 +1,12 @@
 import { z } from "zod";
 
-export const authSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-export const registerSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  phone: z.string(),
-});
-
-export type AuthFormData = z.infer<typeof authSchema>;
-
-export type RegisterFormData = z.infer<typeof registerSchema>;
-
+interface ValidationMessages {
+  validation: {
+    email: string;
+    password: string;
+    required: string;
+  };
+}
 export interface JWT {
   accessToken: string;
   refreshToken: string;
@@ -27,3 +19,19 @@ export interface AuthState {
   refreshTokens: () => Promise<JWT>;
   logout: () => Promise<void>;
 }
+
+export const createAuthSchema = (messages: ValidationMessages) =>
+  z.object({
+    email: z.string().email(messages.validation.email),
+    password: z.string().min(6, messages.validation.password),
+  });
+
+export const createRegisterSchema = (messages: ValidationMessages) =>
+  z.object({
+    email: z.string().email(messages.validation.email),
+    password: z.string().min(6, messages.validation.password),
+    phone: z.string().min(1, messages.validation.required),
+  });
+
+export type AuthFormData = z.infer<ReturnType<typeof createAuthSchema>>;
+export type RegisterFormData = z.infer<ReturnType<typeof createRegisterSchema>>;
