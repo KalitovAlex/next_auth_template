@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { authApi } from "@/features/auth/api";
-import { JWTEnum } from "@/shared/config/auth";
+import { config } from "@/shared/config";
 import { AuthState } from "../types";
 
 const getInitialAuthState = () => {
   if (typeof window === "undefined") return false;
-  return !!localStorage.getItem(JWTEnum.REFRESH_TOKEN);
+  return !!localStorage.getItem(config.auth.JWT.REFRESH_TOKEN);
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -19,7 +19,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isLoading: true, error: null });
       const refreshToken =
         typeof window !== "undefined"
-          ? localStorage.getItem(JWTEnum.REFRESH_TOKEN)
+          ? localStorage.getItem(config.auth.JWT.REFRESH_TOKEN)
           : null;
 
       if (!refreshToken) {
@@ -30,7 +30,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       if (data.refreshToken) {
         if (typeof window !== "undefined") {
-          localStorage.setItem(JWTEnum.REFRESH_TOKEN, data.refreshToken);
+          localStorage.setItem(
+            config.auth.JWT.REFRESH_TOKEN,
+            data.refreshToken
+          );
         }
         await fetch("/api/auth/set-token", {
           method: "POST",
@@ -42,7 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       return data;
     } catch (error) {
       if (typeof window !== "undefined") {
-        localStorage.removeItem(JWTEnum.REFRESH_TOKEN);
+        localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
       }
       await fetch("/api/auth/remove-token", { method: "POST" });
       set({
@@ -57,7 +60,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     if (typeof window !== "undefined") {
-      localStorage.removeItem(JWTEnum.REFRESH_TOKEN);
+      localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
     }
     await fetch("/api/auth/remove-token", { method: "POST" });
     set({ isAuthenticated: false });

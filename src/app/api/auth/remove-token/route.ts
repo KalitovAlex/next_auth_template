@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
-import { JWTEnum } from '@/shared/enums/auth';
+import { config } from "@/shared/config";
+import { NextResponse } from "next/server";
 
 export async function POST() {
   const response = NextResponse.json({ success: true });
-  
-  response.cookies.delete(JWTEnum.REFRESH_TOKEN);
-  
+
+  response.cookies.delete(config.auth.JWT.REFRESH_TOKEN);
+
   return response;
 }

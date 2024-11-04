@@ -1,4 +1,7 @@
-import { Theme } from "@/shared/config/theme";
+import { config } from "@/shared/config";
+
+type ThemeModes = typeof config.theme.modes;
+export type Theme = ThemeModes[keyof ThemeModes];
 
 export interface ThemeState {
   theme: Theme;

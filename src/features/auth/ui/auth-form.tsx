@@ -40,10 +40,7 @@ export function AuthForm() {
   };
 
   return (
-    <div className="max-w-md w-full space-y-8 dark:text-white dark:bg-black/10">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold">{t.auth.title}</h2>
-      </div>
+    <div className="space-y-6">
       <Form<AuthFormData>
         fields={fields}
         schema={authSchema}
@@ -52,7 +49,7 @@ export function AuthForm() {
         <Button
           type="primary"
           htmlType="submit"
-          className="font-bold mt-2"
+          className="w-full h-[48px] bg-primary hover:bg-primary-hover text-white text-[15px] font-medium rounded-xl mt-2"
           block
         >
           {t.auth.title}

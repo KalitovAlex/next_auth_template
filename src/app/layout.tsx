@@ -4,7 +4,11 @@ import "@/shared/styles/antd-overrides.css";
 import { Providers } from "@/shared/utils/providers/providers";
 import { Header } from "@/widgets/header/ui/header";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
@@ -12,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+    <html lang="en" className={inter.className}>
+      <body className={`${inter.className} antialiased bg-[#0A0A0B]`}>
         <Providers>
           <Header />
           {children}

@@ -9,17 +9,22 @@ export function InputField<T extends FieldValues>({
   ...props
 }: ControlledInputFieldProps<T>) {
   return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field, fieldState: { error } }) => (
-        <BaseInputField
-          {...field}
-          {...props}
-          label={label}
-          error={error?.message}
-        />
+    <div className="space-y-2.5">
+      <Controller
+        name={name}
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <BaseInputField
+            {...field}
+            {...props}
+            label={label}
+            error={error?.message}
+          />
+        )}
+      />
+      {props.error && (
+        <p className="text-[13px] text-red-500 mt-1">{props.error[0]}</p>
       )}
-    />
+    </div>
   );
-} 
+}

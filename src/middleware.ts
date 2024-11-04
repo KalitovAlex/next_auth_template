@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { JWTEnum } from "@/shared/config/auth";
-import { AUTH, HOME } from "@/shared/config/routes";
+import { AUTH, HOME } from "./shared/router/routes";
+import { config } from "./shared/config";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const refreshToken = request.cookies.get(JWTEnum.REFRESH_TOKEN)?.value;
+  const refreshToken = request.cookies.get(
+    config.auth.JWT.REFRESH_TOKEN
+  )?.value;
 
   if (refreshToken && pathname === AUTH) {
     return NextResponse.redirect(new URL(HOME, request.url));
@@ -18,6 +20,6 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = {
+export const middlewareConfig = {
   matcher: [AUTH, HOME],
 };

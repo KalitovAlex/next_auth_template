@@ -3,7 +3,7 @@
 import { FloatButton } from "antd";
 import { Moon, Sun } from "lucide-react";
 import { useThemeStore } from "../model/theme-store";
-import { Themes, ThemeToolTip } from "@/shared/config/theme";
+import { config } from "@/shared/config";
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useThemeStore();
@@ -11,14 +11,18 @@ export function ThemeSwitcher() {
   return (
     <FloatButton
       icon={
-        theme === Themes.LIGHT ? (
+        theme === config.theme.modes.LIGHT ? (
           <Moon className="text-white" size={16} />
         ) : (
           <Sun className="text-black" size={16} />
         )
       }
       onClick={setTheme}
-      tooltip={theme === Themes.DARK ? ThemeToolTip.DARK : ThemeToolTip.LIGHT}
+      tooltip={
+        theme === config.theme.modes.DARK 
+          ? config.theme.tooltips.DARK 
+          : config.theme.tooltips.LIGHT
+      }
       style={{
         right: 24,
         bottom: 24,
