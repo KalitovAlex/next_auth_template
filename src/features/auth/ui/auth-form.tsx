@@ -1,17 +1,17 @@
 "use client";
 
-import { InputTypes } from "@/shared/enums/input";
-import { useAuth } from "../hooks/use-auth";
-import { AuthFormData, createAuthSchema } from "@/shared/types/auth";
+import { AuthFormData, createAuthSchema } from "../types";
 import { Button, App } from "antd";
-import { Form } from "@/components/form/form";
+import { useAuth } from "../model/use-auth";
 import { useTranslations } from "@/shared/hooks/use-translations";
+import { InputTypes } from "@/shared/enums/input";
+import { Form } from "@/components/form/form";
 
 export function AuthForm() {
   const { login } = useAuth();
   const { message } = App.useApp();
   const t = useTranslations();
-  
+
   const authSchema = createAuthSchema(t);
 
   const fields = [
@@ -49,7 +49,12 @@ export function AuthForm() {
         schema={authSchema}
         onSubmit={handleSubmit}
       >
-        <Button type="primary" htmlType="submit" className="font-bold mt-2" block>
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="font-bold mt-2"
+          block
+        >
           {t.auth.title}
         </Button>
       </Form>

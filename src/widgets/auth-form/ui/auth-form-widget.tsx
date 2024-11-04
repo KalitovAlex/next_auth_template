@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { REGISTER } from "@/shared/router/routes";
 import { useTranslations } from "@/shared/hooks/use-translations";
-import { AuthForm } from "./auth-form";
+import { AuthForm } from "@/features/auth/ui/auth-form";
 
-export function AuthFormWrapper() {
+export function AuthFormWidget() {
   const t = useTranslations();
 
   return (
@@ -21,4 +21,4 @@ export function AuthFormWrapper() {
       </p>
     </div>
   );
-} 
+}
