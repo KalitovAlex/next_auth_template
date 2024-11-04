@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "antd";
-import { useLanguageStore } from "@/shared/store/language-store";
-import { Languages } from "@/shared/enums/locale";
+import { useLanguageStore } from "../model/language-store";
+import { Languages } from "@/shared/config/locale";
 
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguageStore();

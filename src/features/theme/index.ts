@@ -1,3 +1,3 @@
-export { ThemeProvider } from "@/features/theme/ui/theme-provider";
-export { useTheme } from "@/features/theme/model/use-theme";
-export type { ThemeState } from "@/features/theme/types";
+export { ThemeProvider } from "./ui/theme-provider";
+export { useThemeStore } from "./model/theme-store";
+export type { ThemeState } from "./types";

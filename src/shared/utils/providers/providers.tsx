@@ -3,17 +3,17 @@
 import { PropsWithChildren } from "react";
 import { QueryProvider } from "./query-provider";
 import { App } from "antd";
-import { AuthProvider } from "@/features/auth/ui/auth-provider";
 import { ThemeProvider } from "@/features/theme";
+import { AntdConfigProvider } from "../components/components-configuration";
 
 export function Providers({ children }: PropsWithChildren) {
   return (
     <QueryProvider>
-      <AuthProvider>
-        <ThemeProvider>
+      <ThemeProvider>
+        <AntdConfigProvider>
           <App>{children}</App>
-        </ThemeProvider>
-      </AuthProvider>
+        </AntdConfigProvider>
+      </ThemeProvider>
     </QueryProvider>
   );
 }

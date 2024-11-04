@@ -2,7 +2,7 @@ import "@/shared/styles/globals.css";
 import { Inter } from "next/font/google";
 import "@/shared/styles/antd-overrides.css";
 import { Providers } from "@/shared/utils/providers/providers";
-import { Header } from "@/components/header";
+import { Header } from "@/widgets/header/ui/header";
 
 const inter = Inter({ subsets: ["latin"] });
 

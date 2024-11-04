@@ -1,15 +1,14 @@
 "use client";
 import { ConfigProvider, theme } from "antd";
-import { Themes } from "@/shared/enums/theme";
+import { useThemeStore } from "@/features/theme";
 import "@/shared/styles/globals.css";
-import { useTheme } from "@/features/theme/model/use-theme";
 
 export function AntdConfigProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { theme: currentTheme } = useTheme();
+  const { theme: currentTheme } = useThemeStore();
 
   return (
     <ConfigProvider
@@ -170,7 +169,7 @@ export function AntdConfigProvider({
           },
         },
         algorithm:
-          currentTheme === Themes.DARK
+          currentTheme === "dark"
             ? theme.darkAlgorithm
             : theme.defaultAlgorithm,
       }}

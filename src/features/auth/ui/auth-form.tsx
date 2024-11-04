@@ -5,7 +5,7 @@ import { Button, App } from "antd";
 import { useAuth } from "../model/use-auth";
 import { useTranslations } from "@/shared/hooks/use-translations";
 import { InputTypes } from "@/shared/enums/input";
-import { Form } from "@/components/form/form";
+import { Form } from "@/shared/ui/form/form";
 
 export function AuthForm() {
   const { login } = useAuth();

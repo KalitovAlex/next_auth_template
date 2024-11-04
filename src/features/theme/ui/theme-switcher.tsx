@@ -2,11 +2,11 @@
 
 import { FloatButton } from "antd";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "../model/use-theme";
+import { useThemeStore } from "../model/theme-store";
 import { Themes, ThemeToolTip } from "@/shared/config/theme";
 
-export const ThemeSwitcher = () => {
-  const { theme, setTheme } = useTheme();
+export function ThemeSwitcher() {
+  const { theme, setTheme } = useThemeStore();
 
   return (
     <FloatButton
@@ -25,4 +25,4 @@ export const ThemeSwitcher = () => {
       }}
     />
   );
-}; 
+} 

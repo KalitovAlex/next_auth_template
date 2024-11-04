@@ -5,7 +5,7 @@ import { useThemeStore } from "../model/theme-store";
 import { Themes } from "@/shared/config/theme";
 import { ThemeSwitcher } from "./theme-switcher";
 
-export const ThemeProvider = ({ children }: PropsWithChildren) => {
+export function ThemeProvider({ children }: PropsWithChildren) {
   const { theme } = useThemeStore();
 
   useEffect(() => {
@@ -18,4 +18,4 @@ export const ThemeProvider = ({ children }: PropsWithChildren) => {
       <ThemeSwitcher />
     </>
   );
-}; 
+} 

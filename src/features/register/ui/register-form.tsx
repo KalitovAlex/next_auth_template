@@ -3,7 +3,7 @@
 import { InputTypes } from "@/shared/enums/input";
 import { useRegister } from "../model/use-register";
 import { Button, App } from "antd";
-import { Form } from "@/components/form/form";
+import { Form } from "@/shared/ui/form/form";
 import { useTranslations } from "@/shared/hooks/use-translations";
 import { createRegisterSchema } from "../types";
 import { RegisterFormData } from "../types";

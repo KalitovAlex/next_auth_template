@@ -1,6 +1,6 @@
-import { Themes } from "@/shared/enums/theme";
+import { Theme } from "@/shared/config/theme";
 
 export interface ThemeState {
-  theme: Themes;
-  setTheme: (theme: Themes) => void;
-}
+  theme: Theme;
+  setTheme: () => void;
+} 
