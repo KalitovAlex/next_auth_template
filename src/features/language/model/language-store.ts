@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { LanguageState } from "../types/locale";
+import { LanguageState } from "../types";
 
 export const useLanguageStore = create<LanguageState>()(
   persist(
@@ -12,4 +12,4 @@ export const useLanguageStore = create<LanguageState>()(
       name: "language-storage",
     }
   )
-); 
+);

@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
-import { AuthFormData } from "@/shared/types/auth";
+import { RegisterFormData } from "@/features/register/types";
 import { AUTH } from "@/shared/router/routes";
-import { authApi } from "@/shared/api/auth";
+import { authApi } from "@/features/auth/api";
 import { useMutation } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/enums/query-keys";
 
@@ -10,7 +10,8 @@ export const useRegister = () => {
 
   const { mutateAsync: register } = useMutation({
     mutationKey: [QUERY_KEYS.REGISTER],
-    mutationFn: (credentials: AuthFormData) => authApi.register(credentials),
+    mutationFn: (credentials: RegisterFormData) =>
+      authApi.register(credentials),
     onSuccess: () => {
       router.push(AUTH);
     },

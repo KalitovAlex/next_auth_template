@@ -1,9 +1,9 @@
 "use client";
 
 import { PropsWithChildren, useEffect } from "react";
-import { useAuthStore } from "@/shared/store/auth-store";
 import { useRouter } from "next/navigation";
 import { REFRESHTOKENLIVETIME } from "@/shared/constants/auth";
+import { useAuthStore } from "@/shared/store/auth-store";
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const { refreshTokens, isAuthenticated, logout } = useAuthStore();

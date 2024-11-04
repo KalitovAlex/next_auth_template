@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { authApi } from "@/shared/api/auth";
-import { JWTEnum } from "@/shared/enums/auth";
-import { AuthState } from "@/shared/types/auth";
+import { authApi } from "@/features/auth/api";
+import { JWTEnum } from "@/shared/config/auth";
+import { AuthState } from "../types";
 
 const getInitialAuthState = () => {
   if (typeof window === "undefined") return false;

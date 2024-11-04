@@ -1,8 +1,8 @@
 "use client";
 import { ConfigProvider, theme } from "antd";
-import { useTheme } from "../providers/theme-provider";
 import { Themes } from "@/shared/enums/theme";
 import "@/shared/styles/globals.css";
+import { useTheme } from "@/features/theme/model/use-theme";
 
 export function AntdConfigProvider({
   children,

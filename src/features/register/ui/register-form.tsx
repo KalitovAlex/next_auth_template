@@ -1,11 +1,12 @@
 "use client";
 
 import { InputTypes } from "@/shared/enums/input";
-import { useRegister } from "../hooks/use-register";
-import { createRegisterSchema, RegisterFormData } from "@/shared/types/auth";
+import { useRegister } from "../model/use-register";
 import { Button, App } from "antd";
 import { Form } from "@/components/form/form";
 import { useTranslations } from "@/shared/hooks/use-translations";
+import { createRegisterSchema } from "../types";
+import { RegisterFormData } from "../types";
 
 export function RegisterForm() {
   const { register } = useRegister();

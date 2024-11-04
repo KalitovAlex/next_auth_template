@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
-import { RegisterForm } from "./register-form";
+import { RegisterForm } from "@/features/register";
 import { AUTH } from "@/shared/router/routes";
 import { useTranslations } from "@/shared/hooks/use-translations";
 
-export const RegisterClient = () => {
+export const RegisterWidget = () => {
   const t = useTranslations();
   return (
     <div className="p-8 bg-white rounded-lg shadow-lg dark:bg-black/10">
@@ -21,4 +20,4 @@ export const RegisterClient = () => {
       </div>
     </div>
   );
-};
+}; 

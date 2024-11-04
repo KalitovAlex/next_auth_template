@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageSwitcher } from "./language-switcher";
+import { LanguageSwitcher } from "@/features/language";
 
 export function Header() {
   return (
@@ -8,4 +8,4 @@ export function Header() {
       <LanguageSwitcher />
     </header>
   );
-} 
+}

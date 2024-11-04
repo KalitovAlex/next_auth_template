@@ -8,6 +8,6 @@ export interface SessionState {
   isAuthenticated: boolean;
   error: Error | null;
   setIsAuthenticated: (value: boolean) => void;
-  refreshTokens: () => Promise<void>;
+  refreshTokens: () => Promise<JWT | void>;
   logout: () => Promise<void>;
-} 
+}

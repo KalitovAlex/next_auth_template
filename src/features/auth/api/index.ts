@@ -1,6 +1,5 @@
 import { apiRequest } from "@/shared/api";
 import { AuthFormData } from "../types";
-import { JWTEnum } from "@/shared/enums/auth";
 
 export const authApi = {
   login: async (credentials: AuthFormData) => {
@@ -18,7 +17,7 @@ export const authApi = {
       throw new Error("Cannot refresh token on server side");
     }
 
-    const refreshToken = localStorage.getItem(JWTEnum.REFRESH_TOKEN);
+    const refreshToken = localStorage.getItem("refreshToken");
     if (!refreshToken) {
       throw new Error("No refresh token available");
     }
@@ -30,7 +29,7 @@ export const authApi = {
 
       return response.data;
     } catch (error) {
-      localStorage.removeItem(JWTEnum.REFRESH_TOKEN);
+      localStorage.removeItem("refreshToken");
       throw error;
     }
   },

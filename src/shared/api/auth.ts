@@ -1,5 +1,5 @@
+import { AuthFormData } from "@/features/auth/types";
 import { apiRequest } from "./index";
-import { AuthFormData } from "@/shared/types/auth";
 import { JWTEnum } from "@/shared/enums/auth";
 
 export const authApi = {

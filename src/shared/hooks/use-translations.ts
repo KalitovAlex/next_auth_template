@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguageStore } from "../store/language-store";
+import { useLanguageStore } from "@/features/language/model/language-store";
 import { translations } from "../i18n/translations";
 
 export const useTranslations = () => {
