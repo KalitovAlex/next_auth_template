@@ -18,7 +18,7 @@ export function Form<T extends Record<string, unknown>>({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="gap-4">
       {fields.map((field) => (
         <InputField
           key={field.name}
@@ -32,4 +32,4 @@ export function Form<T extends Record<string, unknown>>({
       {children}
     </form>
   );
-} 
+}

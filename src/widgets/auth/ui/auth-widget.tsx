@@ -10,29 +10,20 @@ export function AuthFormWidget() {
 
   return (
     <div className="w-[460px] relative z-10">
-      <div className="flex justify-center mb-8">
-        <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2"
-          >
-            <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-          </svg>
+      <div className="bg-slate-100 space-y-6 dark:bg-[#17181C] backdrop-blur-xl rounded-2xl m-2 p-8 shadow-xl">
+        <div className="text-center space-y-2">
+          <h1 className="text-[28px] font-bold text-black dark:text-white">
+            {t.auth.title}
+          </h1>
+          <p className="text-[15px] text-[#6C7281]">{t.auth.description}</p>
         </div>
-      </div>
-
-      <div className="bg-[#17181C] backdrop-blur-xl rounded-2xl p-8 shadow-xl">
         <AuthForm />
 
-        <div className="mt-6 flex items-center justify-between text-[15px]">
-          <span className="text-[#6C7281]">{t.auth.noAccount}</span>
+        <div className="mt-4 flex items-center justify-between text-[15px]">
+          <span className="text-[#6C7281] text-sm">{t.auth.noAccount}</span>
           <Link
             href={REGISTER}
-            className="text-white hover:text-primary transition-colors"
+            className="text-primary font-bold hover:text-primary-hover transition-colors"
           >
             {t.auth.register}
           </Link>

@@ -5,9 +5,8 @@ import { Providers } from "@/shared/utils/providers/providers";
 import { Header } from "@/widgets/header/ui/header";
 
 const inter = Inter({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  display: "swap",
 });
 
 export default function RootLayout({

@@ -49,7 +49,7 @@ export function AuthForm() {
         <Button
           type="primary"
           htmlType="submit"
-          className="w-full h-[48px] bg-primary hover:bg-primary-hover text-white text-[15px] font-medium rounded-xl mt-2"
+          className="w-full  bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-md"
           block
         >
           {t.auth.title}

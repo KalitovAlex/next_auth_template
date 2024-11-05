@@ -9,7 +9,7 @@ export function InputField<T extends FieldValues>({
   ...props
 }: ControlledInputFieldProps<T>) {
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-2.5 mb-4">
       <Controller
         name={name}
         control={control}

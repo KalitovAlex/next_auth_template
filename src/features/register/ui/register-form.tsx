@@ -47,32 +47,10 @@ export function RegisterForm() {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h1 className="text-[28px] font-medium text-white">
+        <h1 className="text-[28px] font-bold text-black dark:text-white">
           {t.register.title}
         </h1>
-        <p className="text-[15px] text-[#6C7281]">
-          {t.register.description}
-        </p>
-      </div>
-
-      <div className="space-y-3">
-        <button className="w-full h-[48px] flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 transition-colors rounded-xl text-white text-[15px]">
-          <img src="/google.svg" alt="Google" className="w-5 h-5" />
-          Sign up with Google
-        </button>
-        <button className="w-full h-[48px] flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 transition-colors rounded-xl text-white text-[15px]">
-          <img src="/twitter.svg" alt="Twitter" className="w-5 h-5" />
-          Sign up with Twitter
-        </button>
-      </div>
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10"></div>
-        </div>
-        <div className="relative flex justify-center text-[13px]">
-          <span className="px-2 bg-[#17181C] text-[#6C7281]">or</span>
-        </div>
+        <p className="text-[15px] text-[#6C7281]">{t.register.description}</p>
       </div>
 
       <Form<RegisterFormData>
@@ -83,7 +61,7 @@ export function RegisterForm() {
         <Button
           type="primary"
           htmlType="submit"
-          className="w-full h-[48px] bg-primary hover:bg-primary-hover text-white text-[15px] font-medium rounded-xl mt-2"
+          className="w-full bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-md mt-2"
           block
         >
           {t.register.title}

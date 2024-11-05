@@ -12,15 +12,15 @@ export function ThemeSwitcher() {
     <FloatButton
       icon={
         theme === config.theme.modes.LIGHT ? (
-          <Moon className="text-white" size={16} />
+          <Moon className="text-black " size={16} />
         ) : (
           <Sun className="text-black" size={16} />
         )
       }
       onClick={setTheme}
       tooltip={
-        theme === config.theme.modes.DARK 
-          ? config.theme.tooltips.DARK 
+        theme === config.theme.modes.DARK
+          ? config.theme.tooltips.DARK
           : config.theme.tooltips.LIGHT
       }
       style={{
@@ -29,4 +29,4 @@ export function ThemeSwitcher() {
       }}
     />
   );
-} 
+}
