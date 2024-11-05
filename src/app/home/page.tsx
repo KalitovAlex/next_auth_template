@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "antd";
-import { useAuthStore } from "@/shared/store/auth-store";
+import { useSessionStore } from "@/entities/session";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  const { logout } = useAuthStore();
+  const { logout } = useSessionStore();
   const router = useRouter();
 
   const handleLogout = () => {
