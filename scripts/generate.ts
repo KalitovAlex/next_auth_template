@@ -17,7 +17,6 @@ import type {
 } from "./types/index";
 import gradient from "gradient-string";
 
-// Constants
 const STRUCTURE_TYPES: StructureTypes = {
   FEATURE: "feature",
   ENTITY: "entity",
@@ -29,7 +28,6 @@ const LAYERS: Layers = {
   API: "api",
 };
 
-// Templates configuration
 const baseTemplates: BaseTemplates = {
   feature: {
     base: {
@@ -53,7 +51,6 @@ const baseTemplates: BaseTemplates = {
         const needsPayload = ops?.create || ops?.update;
         const needsResponse = ops?.read || ops?.create || ops?.update;
 
-        // Props интерфейс только если выбран
         if (customInterfaces?.props) {
           types +=
             `export interface ${componentName}Props {\n` +
@@ -61,7 +58,6 @@ const baseTemplates: BaseTemplates = {
             `}\n\n`;
         }
 
-        // State интерфейс только если выбран
         if (customInterfaces?.state) {
           types +=
             `export interface ${componentName}State {\n` +
@@ -69,7 +65,6 @@ const baseTemplates: BaseTemplates = {
             `}\n\n`;
         }
 
-        // Hook интерфейс только если выбран
         if (customInterfaces?.hook) {
           types +=
             `export interface ${componentName}Hook {\n` +
@@ -80,7 +75,6 @@ const baseTemplates: BaseTemplates = {
             `}\n\n`;
         }
 
-        // API интерфейсы генерируются автоматически на основе выбранных операций
         if (needsPayload) {
           if (ops?.create) {
             types +=
@@ -126,7 +120,6 @@ const baseTemplates: BaseTemplates = {
       ): string => {
         const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
 
-        // Формируем импорты только если нужны Props
         const imports = [
           `"use client";\n`,
           `import { cn } from "@/shared/utils/lib/cn";`,
@@ -177,7 +170,6 @@ const baseTemplates: BaseTemplates = {
       ): string => {
         const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
 
-        // Импортируем тип State только если он выбран
         const stateImport = customInterfaces?.state
           ? `import type { ${componentName}State } from "../types";\n\n`
           : "\n";
@@ -248,9 +240,8 @@ const baseTemplates: BaseTemplates = {
           );
         }
 
-        // Определяем нужные типы на основе операций
         const needsPayload = ops.create || ops.update;
-        const needsResponse = ops.read || ops.create || ops.update; // Для всех операций кроме delete
+        const needsResponse = ops.read || ops.create || ops.update;
 
         let methods = `export const ${componentName}Api = {\n`;
 
@@ -293,7 +284,6 @@ const baseTemplates: BaseTemplates = {
         methods = methods.replace(/,\n$/, "\n");
         methods += `};`;
 
-        // Формируем импорты только для используемых типов
         let imports = `import type {`;
         const types: string[] = [];
 
@@ -317,7 +307,6 @@ const baseTemplates: BaseTemplates = {
   },
 };
 
-// Utility functions
 const createReadlineInterface = (): readline.Interface =>
   readline.createInterface({
     input: process.stdin,
@@ -450,7 +439,6 @@ const askStructureType = async (
   return selectedType as StructureType;
 };
 
-// Move askConfirmation before it's used
 const getLayersConfig = async (
   rl: readline.Interface,
   type: StructureType,
@@ -624,7 +612,6 @@ const generateFiles = async (
     throw new Error(`Template for type ${type} not found`);
   }
 
-  // Create base structure
   createStructure(
     basePath,
     template.base,
@@ -633,7 +620,6 @@ const generateFiles = async (
     customInterfaces
   );
 
-  // Create layer-specific structures
   if (config.layers.ui && template.ui) {
     createStructure(
       basePath,
@@ -673,10 +659,8 @@ const createStructure = (
   Object.entries(template).forEach(([filePath, contentFn]) => {
     const layer = filePath.split("/")[0] as keyof FileNames;
 
-    // Skip store file if not selected
     if (filePath.includes("store") && !fileNames?.model?.store) return;
 
-    // Skip hook file if not selected
     if (filePath.includes("use-") && !fileNames?.model?.hook) return;
 
     const fileName = filePath.includes("{{fileName}}")
@@ -731,7 +715,6 @@ const printDirectoryStructure = async (
   }
 };
 
-// Finally, place generateStructure and its execution at the end
 async function generateStructure(): Promise<void> {
   const rl = createReadlineInterface();
   const spinner = ora();
@@ -742,15 +725,12 @@ async function generateStructure(): Promise<void> {
     );
     console.log(chalk.dim("✨ Create new features and entities with ease\n"));
 
-    // Get structure type using selection menu
     const type = await askStructureType(rl);
 
-    // Get name
     const name = validateName(
       await askQuestion(rl, chalk.blue(" Enter name: "))
     );
 
-    // Проверяем существование фичи
     if (checkFeatureExists(type, name)) {
       spinner.fail(
         chalk.red(`❌ ${type} "${name}" already exists! Operation cancelled.`)
@@ -759,23 +739,19 @@ async function generateStructure(): Promise<void> {
       return;
     }
 
-    // Get layers configuration with name
     const layers = await getLayersConfig(rl, type, name);
 
-    // Получаем конфигурацию кастомных интерфейсов
     const customInterfaces = await askCustomInterfaces(
       rl,
       layers.layers,
       layers.fileNames
     );
 
-    // Передаем конфигурацию в generateFiles
     spinner.start(chalk.blue(`🔨 Creating ${type} structure...`));
     await generateFiles(type, name, layers, customInterfaces);
 
     spinner.succeed(chalk.green(`✅ ${type} "${name}" successfully created`));
 
-    // Print structure
     console.log("\n" + chalk.yellow("📂 Created files structure:"));
     await printDirectoryStructure(
       path.join(
@@ -784,7 +760,6 @@ async function generateStructure(): Promise<void> {
       )
     );
 
-    // Добавим итоговое сообщение
     console.log(
       "\n" + gradient.cristal("✨ Generation completed successfully!")
     );
@@ -800,10 +775,8 @@ async function generateStructure(): Promise<void> {
   }
 }
 
-// Start generator at the very end
 generateStructure().catch(console.error);
 
-// Обновим функцию askCustomInterfaces
 const askCustomInterfaces = async (
   rl: readline.Interface,
   layers: LayersConfig["layers"],
