@@ -1,11 +1,11 @@
 import { useRouter } from "next/navigation";
-import { AuthFormData } from "../types";
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "../api";
 import { QUERY_KEYS } from "@/shared/enums/query-keys";
 import { SessionState, useSessionStore } from "@/entities/session";
 import { HOME } from "@/shared/router/routes";
 import { config } from "@/shared/config";
+import { AuthFormData } from "../types";
 
 export const useAuth = () => {
   const router = useRouter();

@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate": "node scripts/generate.js"
+    "gen": "node --loader ts-node/esm scripts/generate.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -27,17 +27,21 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/chalk": "^2.2.0",
+    "@types/gradient-string": "^1.1.5",
+    "@types/node": "^20.0.0",
+    "@types/ora": "^3.2.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
+    "chalk": "^5.3.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.1",
+    "gradient-string": "^2.0.2",
+    "ora": "^8.0.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5",
-    "chalk": "^5.3.0",
-    "gradient-string": "^2.0.2",
-    "ora": "^8.0.1"
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }
