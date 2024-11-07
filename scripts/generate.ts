@@ -7,11 +7,8 @@ import type {
   StructureType,
   StructureTypes,
   Layers,
-  FileNames,
-  LayersConfig,
   BaseTemplates,
   TemplateFunction,
-  FileOperationType,
   CrudOperations,
   CustomInterfacesConfig,
 } from "./types/index";
@@ -28,98 +25,89 @@ const LAYERS: Layers = {
   API: "api",
 };
 
+type LayersConfig = {
+  layers: {
+    ui: boolean;
+    model: {
+      enabled: boolean;
+      store: boolean;
+      hook: boolean;
+    };
+    api: boolean;
+  };
+  api?: {
+    includeCrud: boolean;
+    selectedOperations?: CrudOperations;
+    customRoute?: string;
+  };
+};
+
 const baseTemplates: BaseTemplates = {
   feature: {
     base: {
-      "index.ts": (name: string): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-        return (
-          `export { ${componentName} } from "./ui/${name}";\n` +
-          `export { use${componentName} } from "./model/use-${name}";\n` +
-          `export type { ${componentName}Props } from "./types";`
-        );
-      },
-      "types/index.ts": (
+      "index.ts": (
         name: string,
-        fileNames?: FileNames,
         customInterfaces?: CustomInterfacesConfig
       ): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-        let types = "";
-
-        const ops = fileNames?.api?.selectedOperations;
-        const needsPayload = ops?.create || ops?.update;
-        const needsResponse = ops?.read || ops?.create || ops?.update;
+        const componentName = capitalize(name);
+        const exports = [];
 
         if (customInterfaces?.props) {
-          types +=
-            `export interface ${componentName}Props {\n` +
-            `  className?: string;\n` +
-            `}\n\n`;
+          exports.push(`export { ${componentName} } from "./ui";`);
+        }
+        if (customInterfaces?.state) {
+          exports.push(`export { use${componentName}Store } from "./model";`);
+        }
+        if (customInterfaces?.hook) {
+          exports.push(`export { use${componentName} } from "./model";`);
+        }
+        exports.push(
+          `export type { ${componentName}Props, ${componentName}State } from "./types";`
+        );
+        exports.push(`export { ${componentName}Api } from "./api";`);
+
+        return exports.join("\n");
+      },
+      "types/index.ts": (name: string): string => {
+        return `export * from "./${name.toLowerCase()}-types";`;
+      },
+      "types/{{name}}-types.ts": (
+        name: string,
+        customInterfaces?: CustomInterfacesConfig
+      ): string => {
+        const componentName = capitalize(name);
+        let types = "";
+
+        if (customInterfaces?.props) {
+          types += `export interface ${componentName}Props {\n  className?: string;\n}\n\n`;
         }
 
         if (customInterfaces?.state) {
-          types +=
-            `export interface ${componentName}State {\n` +
-            `  // Define your state here\n` +
-            `}\n\n`;
+          types += `export interface ${componentName}State {\n  // Define your state here\n}\n\n`;
         }
 
         if (customInterfaces?.hook) {
-          types +=
-            `export interface ${componentName}Hook {\n` +
-            `  // Define your hook return type here\n` +
-            `  data?: unknown;\n` +
-            `  isLoading?: boolean;\n` +
-            `  error?: Error | null;\n` +
-            `}\n\n`;
+          types += `export interface ${componentName}Hook {\n  data?: unknown;\n  isLoading?: boolean;\n  error?: Error | null;\n}\n\n`;
         }
 
-        if (needsPayload) {
-          if (ops?.create) {
-            types +=
-              `export interface Create${componentName}Payload {\n` +
-              `  // Define create payload here\n` +
-              `}\n\n`;
-          }
-          if (ops?.update) {
-            types +=
-              `export interface Update${componentName}Payload {\n` +
-              `  // Define update payload here\n` +
-              `}\n\n`;
-          }
-        }
-
-        if (needsResponse) {
-          types +=
-            `export interface ${componentName}Response {\n` +
-            `  // Define API response here\n` +
-            `}\n\n`;
-
-          if (ops?.read) {
-            types +=
-              `export interface ${componentName}ListResponse {\n` +
-              `  items: ${componentName}Response[];\n` +
-              `  total: number;\n` +
-              `}\n`;
-          }
-        }
+        types += `export interface Create${componentName}Payload {\n  // Define create payload here\n}\n\n`;
+        types += `export interface Update${componentName}Payload {\n  // Define update payload here\n}\n\n`;
+        types += `export interface ${componentName}Response {\n  // Define API response here\n}\n\n`;
+        types += `export interface ${componentName}ListResponse {\n  items: ${componentName}Response[];\n  total: number;\n}\n`;
 
         return types;
       },
     },
     [LAYERS.UI]: {
       "ui/index.ts": (name: string): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-        return `export { ${componentName} } from "./${name}-ui";`;
+        const componentName = capitalize(name);
+        return `export { ${componentName} } from "./${name.toLowerCase()}-ui";`;
       },
-      "ui/{{fileName}}-ui.tsx": (
+      "ui/{{name}}-ui.tsx": (
         name: string,
-        fileNames?: FileNames,
         customInterfaces?: CustomInterfacesConfig
       ): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-
+        const componentName = capitalize(name);
         const imports = [
           `"use client";\n`,
           `import { cn } from "@/shared/utils/lib/cn";`,
@@ -150,87 +138,86 @@ const baseTemplates: BaseTemplates = {
       },
     },
     [LAYERS.MODEL]: {
-      "model/index.ts": (name: string, fileNames?: FileNames): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+      "model/index.ts": (
+        name: string,
+        customInterfaces?: CustomInterfacesConfig
+      ): string => {
+        const componentName = capitalize(name);
         const exports = [];
-        if (fileNames?.model?.store) {
+
+        if (customInterfaces?.state) {
           exports.push(
-            `export { use${componentName}Store } from "./${name}-store";`
+            `export { use${componentName}Store } from "./${name.toLowerCase()}-store";`
           );
         }
-        if (fileNames?.model?.hook) {
-          exports.push(`export { use${componentName} } from "./use-${name}";`);
+        if (customInterfaces?.hook) {
+          exports.push(
+            `export { use${componentName} } from "./use-${name.toLowerCase()}";`
+          );
         }
+
         return exports.join("\n");
       },
       "model/{{name}}-store.ts": (
         name: string,
-        fileNames?: FileNames,
         customInterfaces?: CustomInterfacesConfig
       ): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+        const componentName = capitalize(name);
 
-        const stateImport = customInterfaces?.state
-          ? `import type { ${componentName}State } from "../types";\n\n`
-          : "\n";
+        if (customInterfaces?.state) {
+          return (
+            `import { create } from "zustand";\n` +
+            `import type { ${componentName}State } from "../types";\n\n` +
+            `export const use${componentName}Store = create<${componentName}State>((set) => ({\n` +
+            `  // Define your store methods here\n` +
+            `}));`
+          );
+        }
 
         return (
-          `import { create } from "zustand";\n` +
-          stateImport +
-          `export const use${componentName}Store = create${
-            customInterfaces?.state ? `<${componentName}State>` : ""
-          }((set) => ({\n` +
+          `import { create } from "zustand";\n\n` +
+          `export const use${componentName}Store = create((set) => ({\n` +
           `  // Define your store methods here\n` +
           `}));`
         );
       },
       "model/use-{{name}}.ts": (
         name: string,
-        fileNames?: FileNames,
         customInterfaces?: CustomInterfacesConfig
       ): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+        const componentName = capitalize(name);
 
-        const imports = [
-          `import { use${componentName}Store } from "./${name}-store";`,
-        ];
-
-        if (customInterfaces?.state) {
-          imports.push(
-            `import type { ${componentName}State } from "../types";`
+        if (customInterfaces?.hook) {
+          return (
+            `import type { ${componentName}Hook } from "../types";\n\n` +
+            `export const use${componentName} = (): ${componentName}Hook => {\n` +
+            `  return {\n    // Return hook data here\n  };\n` +
+            `};`
           );
         }
 
-        if (customInterfaces?.hook) {
-          imports.push(`import type { ${componentName}Hook } from "../types";`);
-        }
-
         return (
-          `${imports.join("\n")}\n\n` +
-          `export const use${componentName} = (): ${
-            customInterfaces?.hook ? `${componentName}Hook` : "void"
-          } => {\n` +
-          `  // Define your hook logic here\n` +
-          `  return ${
-            customInterfaces?.hook
-              ? "{\n    // Return hook data here\n  }"
-              : "undefined"
-          };\n` +
+          `export const use${componentName} = () => {\n` +
+          `  return {\n    // Return hook data here\n  };\n` +
           `};`
         );
       },
     },
     [LAYERS.API]: {
       "api/index.ts": (name: string): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-        return `export { ${componentName}Api } from "./${name}-api";`;
+        const componentName = capitalize(name);
+        return `export { ${componentName}Api } from "./${name.toLowerCase()}-api";`;
       },
-      "api/{{name}}-api.ts": (name: string, fileNames?: FileNames): string => {
-        const componentName = `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
-        const route = fileNames?.api?.route || name.toLowerCase();
-        const ops = fileNames?.api?.selectedOperations;
+      "api/{{name}}-api.ts": (
+        name: string,
+        customInterfaces?: CustomInterfacesConfig,
+        config?: LayersConfig
+      ): string => {
+        const componentName = capitalize(name);
+        const route = config?.api?.customRoute || name.toLowerCase();
+        const ops = config?.api?.selectedOperations;
 
-        if (!fileNames?.api?.includeCrud || !ops) {
+        if (!config?.api?.includeCrud || !ops) {
           return (
             `import type { ${componentName}Props } from "../types";\n` +
             `import { apiRequest } from "@/shared/api";\n\n` +
@@ -240,71 +227,81 @@ const baseTemplates: BaseTemplates = {
           );
         }
 
-        const needsPayload = ops.create || ops.update;
-        const needsResponse = ops.read || ops.create || ops.update;
-
         let methods = `export const ${componentName}Api = {\n`;
 
         if (ops.read) {
-          methods +=
-            `  getAll: async () => {\n` +
-            `    const response = await apiRequest.get<${componentName}ListResponse>("/${route}");\n` +
-            `    return response.data;\n` +
-            `  },\n\n` +
-            `  getById: async (id: string) => {\n` +
-            `    const response = await apiRequest.get<${componentName}Response>(\`/${route}/\${id}\`);\n` +
-            `    return response.data;\n` +
-            `  },\n\n`;
+          methods += generateReadMethods(componentName, route);
         }
-
         if (ops.create) {
-          methods +=
-            `  create: async (data: Create${componentName}Payload) => {\n` +
-            `    const response = await apiRequest.post<${componentName}Response>("/${route}", data);\n` +
-            `    return response.data;\n` +
-            `  },\n\n`;
+          methods += generateCreateMethod(componentName, route);
         }
-
         if (ops.update) {
-          methods +=
-            `  update: async (id: string, data: Update${componentName}Payload) => {\n` +
-            `    const response = await apiRequest.patch<${componentName}Response>(\`/${route}/\${id}\`, data);\n` +
-            `    return response.data;\n` +
-            `  },\n\n`;
+          methods += generateUpdateMethod(componentName, route);
         }
-
         if (ops.delete) {
-          methods +=
-            `  delete: async (id: string) => {\n` +
-            `    const response = await apiRequest.delete(\`/${route}/\${id}\`);\n` +
-            `    return response.data;\n` +
-            `  },\n`;
+          methods += generateDeleteMethod(route);
         }
 
         methods = methods.replace(/,\n$/, "\n");
         methods += `};`;
 
-        let imports = `import type {`;
-        const types: string[] = [];
-
-        if (needsPayload) {
-          if (ops.create) types.push(`Create${componentName}Payload`);
-          if (ops.update) types.push(`Update${componentName}Payload`);
-        }
-
-        if (needsResponse) {
-          types.push(`${componentName}Response`);
-          if (ops.read) types.push(`${componentName}ListResponse`);
-        }
-
-        imports += `\n  ${types.join(",\n  ")}\n`;
-        imports += `} from "../types";\n`;
-        imports += `import { apiRequest } from "@/shared/api";\n\n`;
+        const imports = generateApiImports(componentName, ops);
 
         return imports + methods;
       },
     },
   },
+};
+
+const generateReadMethods = (componentName: string, route: string): string => `
+  getAll: async () => {
+    const response = await apiRequest.get<${componentName}ListResponse>("/${route}");
+    return response.data;
+  },
+  getById: async (id: string) => {
+    const response = await apiRequest.get<${componentName}Response>(\`/${route}/\${id}\`);
+    return response.data;
+  },
+`;
+
+const generateCreateMethod = (componentName: string, route: string): string => `
+  create: async (data: Create${componentName}Payload) => {
+    const response = await apiRequest.post<${componentName}Response>("/${route}", data);
+    return response.data;
+  },
+`;
+
+const generateUpdateMethod = (componentName: string, route: string): string => `
+  update: async (id: string, data: Update${componentName}Payload) => {
+    const response = await apiRequest.patch<${componentName}Response>(\`/${route}/\${id}\`, data);
+    return response.data;
+  },
+`;
+
+const generateDeleteMethod = (route: string): string => `
+  delete: async (id: string) => {
+    const response = await apiRequest.delete(\`/${route}/\${id}\`);
+    return response.data;
+  },
+`;
+
+const generateApiImports = (
+  componentName: string,
+  ops: CrudOperations
+): string => {
+  const types: string[] = [];
+
+  if (ops.create) types.push(`Create${componentName}Payload`);
+  if (ops.update) types.push(`Update${componentName}Payload`);
+  if (ops.read || ops.create || ops.update) {
+    types.push(`${componentName}Response`);
+    if (ops.read) types.push(`${componentName}ListResponse`);
+  }
+
+  return (
+    `import type {\n  ${types.join(",\n  ")}\n} from "../types";\n` +
+    `import { apiRequest } from "@/shared/api";\n\n`
+  );
 };
 
 const createReadlineInterface = (): readline.Interface =>
@@ -441,74 +438,40 @@ const askStructureType = async (
 
 const getLayersConfig = async (
   rl: readline.Interface,
-  type: StructureType,
-  name: string
+  type: StructureType
 ): Promise<LayersConfig> => {
-  const layers = {
-    ui: false,
-    model: false,
-    api: false,
+  const config: LayersConfig = {
+    layers: {
+      ui: false,
+      model: {
+        enabled: false,
+        store: false,
+        hook: false,
+      },
+      api: false,
+    },
   };
 
   console.log(chalk.yellow("\n🗂  Select layers to generate:"));
   console.log(chalk.dim("Choose which layers you want to include\n"));
 
   if (type === "feature") {
-    layers.ui = await askConfirmation(rl, "🎨 Include UI layer?");
-  }
-  layers.model = await askConfirmation(rl, "📊 Include Model layer?");
-  layers.api = await askConfirmation(rl, "🔌 Include API layer?");
-
-  if (!layers.ui && !layers.model && !layers.api) {
-    throw new Error("At least one layer must be selected");
+    config.layers.ui = await askConfirmation(rl, "🎨 Include UI layer?");
   }
 
-  const fileNames = await getFileNames(rl, type, layers, name);
-  return { layers, fileNames };
-};
-
-const getFileNames = async (
-  rl: readline.Interface,
-  type: StructureType,
-  layers: LayersConfig["layers"],
-  name: string
-): Promise<FileNames> => {
-  const fileNames: FileNames = {};
-
-  if (layers.ui && type === "feature") {
-    console.log(chalk.yellow("\n📝 UI Layer file names:"));
-    fileNames.ui = {
-      component: await askFileName(rl, name, "ui"),
-    };
+  const includeModel = await askConfirmation(rl, "📊 Include Model layer?");
+  if (includeModel) {
+    config.layers.model.enabled = true;
+    config.layers.model.store = await askConfirmation(rl, "📦 Include Store?");
+    config.layers.model.hook = await askConfirmation(rl, "🎣 Include Hook?");
   }
 
-  if (layers.model) {
-    console.log(chalk.yellow("\n📝 Model Layer file names:"));
-    fileNames.model = {
-      types: await askFileName(rl, name, "types"),
-    };
-
-    const includeStore = await askConfirmation(rl, "Include store?");
-    if (includeStore) {
-      fileNames.model.store = await askFileName(rl, name, "store");
-    }
-
-    const includeHook = await askConfirmation(rl, "Include hook?");
-    if (includeHook) {
-      fileNames.model.hook = await askFileName(rl, name, "hook");
-    }
-  }
-
-  if (layers.api) {
-    console.log(chalk.yellow("\n📝 API Layer configuration:"));
-
+  config.layers.api = await askConfirmation(rl, "🔌 Include API layer?");
+  if (config.layers.api) {
     const includeCrud = await askConfirmation(
       rl,
       "🔧 Include CRUD operations?"
     );
-
-    let route: string | undefined;
-    let selectedOperations: CrudOperations | undefined;
 
     if (includeCrud) {
       console.log(chalk.blue("\n🛠  Select CRUD operations:"));
@@ -525,75 +488,32 @@ const getFileNames = async (
         )
       );
 
-      selectedOperations = parseCrudOperations(crudInput);
-
       const useCustomRoute = await askConfirmation(
         rl,
         "🛣️  Use custom API route?"
       );
-      if (useCustomRoute) {
-        route = await askQuestion(
-          rl,
-          chalk.blue("↪ Enter custom route (without leading slash): ")
-        );
-      }
+      const customRoute = useCustomRoute
+        ? await askQuestion(
+            rl,
+            chalk.blue("↪ Enter custom route (without leading slash): ")
+          )
+        : undefined;
+
+      config.api = {
+        includeCrud,
+        selectedOperations: parseCrudOperations(crudInput),
+        customRoute,
+      };
+    } else {
+      config.api = { includeCrud };
     }
-
-    fileNames.api = {
-      service: await askFileName(rl, name, "api"),
-      route: route || name.toLowerCase(),
-      includeCrud,
-      selectedOperations,
-    };
   }
 
-  return fileNames;
-};
-
-const askFileName = async (
-  rl: readline.Interface,
-  name: string,
-  type: FileOperationType
-): Promise<string> => {
-  const defaultName =
-    type === "ui"
-      ? name
-      : type === "store"
-      ? `${name}-store`
-      : type === "hook"
-      ? `use-${name}`
-      : type === "api"
-      ? `${name}-api`
-      : type === "types"
-      ? "types"
-      : name;
-
-  const option = await askNumberInRange(
-    rl,
-    chalk.blue(`Choose option for ${type} file name:\n`) +
-      chalk.gray(`1) Default name: ${defaultName}\n`) +
-      chalk.gray("2) Enter custom name\n") +
-      chalk.blue("Enter option (1-2): "),
-    1,
-    2
-  );
-
-  if (option === 1) {
-    return defaultName;
+  if (!config.layers.ui && !config.layers.model.enabled && !config.layers.api) {
+    throw new Error("At least one layer must be selected");
   }
 
-  while (true) {
-    const customName = await askQuestion(
-      rl,
-      chalk.blue(`Enter custom name for ${type} file: `)
-    );
-
-    if (customName.trim()) {
-      return customName;
-    }
-
-    console.log(chalk.red("❌ Name cannot be empty"));
-  }
+  return config;
 };
 
 const generateFiles = async (
@@ -612,40 +532,16 @@ const generateFiles = async (
     throw new Error(`Template for type ${type} not found`);
   }
 
-  createStructure(
-    basePath,
-    template.base,
-    name,
-    config.fileNames,
-    customInterfaces
-  );
+  createStructure(basePath, template.base, name, customInterfaces, config);
 
   if (config.layers.ui && template.ui) {
-    createStructure(
-      basePath,
-      template.ui,
-      name,
-      config.fileNames,
-      customInterfaces
-    );
+    createStructure(basePath, template.ui, name, customInterfaces, config);
   }
   if (config.layers.model && template.model) {
-    createStructure(
-      basePath,
-      template.model,
-      name,
-      config.fileNames,
-      customInterfaces
-    );
+    createStructure(basePath, template.model, name, customInterfaces, config);
   }
   if (config.layers.api && template.api) {
-    createStructure(
-      basePath,
-      template.api,
-      name,
-      config.fileNames,
-      customInterfaces
-    );
+    createStructure(basePath, template.api, name, customInterfaces, config);
   }
 };
 
@@ -653,37 +549,19 @@ const createStructure = (
   basePath: string,
   template: Record<string, TemplateFunction>,
   name: string,
-  fileNames: FileNames,
-  customInterfaces: CustomInterfacesConfig
+  customInterfaces: CustomInterfacesConfig,
+  config?: LayersConfig
 ): void => {
   Object.entries(template).forEach(([filePath, contentFn]) => {
-    const layer = filePath.split("/")[0] as keyof FileNames;
-
-    if (filePath.includes("store") && !fileNames?.model?.store) return;
-
-    if (filePath.includes("use-") && !fileNames?.model?.hook) return;
-
-    const fileName = filePath.includes("{{fileName}}")
-      ? (layer === "ui" && fileNames.ui?.component) ||
-        (layer === "model" && fileNames.model?.types) ||
-        (layer === "api" && fileNames.api?.service) ||
-        name.toLowerCase()
-      : name.toLowerCase();
-
-    const finalPath = path.join(
-      basePath,
-      filePath
-        .replace("{{fileName}}", fileName)
-        .replace("{{name}}", name.toLowerCase())
-    );
-
-    const directory = path.dirname(finalPath);
+    const finalPath = filePath.replace(/{{name}}/g, name.toLowerCase());
+    const fullPath = path.join(basePath, finalPath);
+    const directory = path.dirname(fullPath);
 
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory, { recursive: true });
     }
 
-    fs.writeFileSync(finalPath, contentFn(name, fileNames, customInterfaces));
+    fs.writeFileSync(fullPath, contentFn(name, customInterfaces, config));
   });
 };
 
@@ -726,7 +604,6 @@ async function generateStructure(): Promise<void> {
     console.log(chalk.dim("✨ Create new features and entities with ease\n"));
 
     const type = await askStructureType(rl);
-
     const name = validateName(
       await askQuestion(rl, chalk.blue(" Enter name: "))
     );
@@ -739,16 +616,11 @@ async function generateStructure(): Promise<void> {
       return;
     }
 
-    const layers = await getLayersConfig(rl, type, name);
-
-    const customInterfaces = await askCustomInterfaces(
-      rl,
-      layers.layers,
-      layers.fileNames
-    );
+    const config = await getLayersConfig(rl, type);
+    const customInterfaces = await askCustomInterfaces(rl, config.layers);
 
     spinner.start(chalk.blue(`🔨 Creating ${type} structure...`));
-    await generateFiles(type, name, layers, customInterfaces);
+    await generateFiles(type, name, config, customInterfaces);
 
     spinner.succeed(chalk.green(`✅ ${type} "${name}" successfully created`));
 
@@ -779,8 +651,7 @@ generateStructure().catch(console.error);
 
 const askCustomInterfaces = async (
   rl: readline.Interface,
-  layers: LayersConfig["layers"],
-  fileNames?: FileNames
+  layers: LayersConfig["layers"]
 ): Promise<CustomInterfacesConfig> => {
   console.log(chalk.yellow("\n📘 Interface Configuration:"));
   console.log(chalk.dim("Select which interfaces you want to generate\n"));
@@ -798,17 +669,21 @@ const askCustomInterfaces = async (
     );
   }
 
-  if (layers.model) {
-    if (fileNames?.model?.store) {
+  if (layers.model.enabled) {
+    if (layers.model.store) {
       config.state = await askConfirmation(
         rl,
         "📊 Generate State interface for Store?"
       );
     }
-    if (fileNames?.model?.hook) {
+    if (layers.model.hook) {
       config.hook = await askConfirmation(rl, "🎣 Generate Hook interface?");
     }
   }
 
   return config;
+};
+
+const capitalize = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };

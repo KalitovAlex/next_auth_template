@@ -9,8 +9,8 @@ export interface CustomInterfacesConfig {
 export interface TemplateFunction {
   (
     name: string,
-    fileNames?: FileNames,
-    customInterfaces?: CustomInterfacesConfig
+    customInterfaces?: CustomInterfacesConfig,
+    config?: LayersConfig
   ): string;
 }
 
