@@ -27,7 +27,6 @@
 
 - **Tailwind CSS** - Utility-first CSS framework
 - **Ant Design (antd)** - UI компоненты
-- **clsx + tailwind-merge** - Утилиты для работы с классами
 
 ### Управление состоянием и запросы
 
