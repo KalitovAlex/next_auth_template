@@ -7,8 +7,4 @@ export const sessionApi = {
     });
     return response.data;
   },
-
-  logout: async () => {
-    await apiRequest.post('/auth/logout');
-  },
 };

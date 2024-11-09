@@ -53,14 +53,10 @@ export const useSessionStore = create<SessionState>((set) => ({
   },
 
   logout: async () => {
-    try {
-      await sessionApi.logout();
+    if (typeof window !== "undefined") {
       localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
-      await fetch("/api/auth/remove-token", { method: "POST" });
-      set({ isAuthenticated: false });
-    } catch (error) {
-      console.error("Logout error:", error);
-      throw error;
     }
+    await fetch("/api/auth/remove-token", { method: "POST" });
+    set({ isAuthenticated: false });
   },
 }));
