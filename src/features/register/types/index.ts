@@ -8,4 +8,4 @@ export const createRegisterSchema = (messages: ValidationMessages) =>
     phone: z.string().min(1, messages.validation.required),
   });
 
-export type RegisterFormData = z.infer<ReturnType<typeof createRegisterSchema>>; 
+export type RegisterFormData = z.infer<ReturnType<typeof createRegisterSchema>>;

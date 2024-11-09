@@ -11,9 +11,7 @@ export type AuthFormData = z.infer<ReturnType<typeof createAuthSchema>>;
 
 export interface AuthState {
   isLoading: boolean;
-  isAuthenticated: boolean;
   error: Error | null;
-  setIsAuthenticated: (value: boolean) => void;
-  refreshTokens: () => Promise<void>;
-  logout: () => Promise<void>;
+  login: (credentials: AuthFormData) => Promise<void>;
+  register: (data: AuthFormData) => Promise<void>;
 } 

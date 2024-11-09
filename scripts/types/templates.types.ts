@@ -1,4 +1,4 @@
-import type { FileNames } from "./files.types";
+import type { LayersConfig } from "./files.types";
 
 export interface CustomInterfacesConfig {
   props: boolean;
