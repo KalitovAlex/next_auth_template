@@ -2,18 +2,18 @@
 
 import { PropsWithChildren } from "react";
 import { QueryProvider } from "./query-provider";
-import { ThemeProvider } from "./theme-provider";
-import { AuthProvider } from "./auth-provider";
 import { App } from "antd";
+import { ThemeProvider } from "@/features/theme";
+import { AntdConfigProvider } from "../components/components-configuration";
 
 export function Providers({ children }: PropsWithChildren) {
   return (
     <QueryProvider>
-      <AuthProvider>
-        <ThemeProvider>
+      <ThemeProvider>
+        <AntdConfigProvider>
           <App>{children}</App>
-        </ThemeProvider>
-      </AuthProvider>
+        </AntdConfigProvider>
+      </ThemeProvider>
     </QueryProvider>
   );
 }

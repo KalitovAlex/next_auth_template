@@ -1,22 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { JWTEnum } from "@/shared/enums/auth";
+import { AUTH, HOME } from "./shared/router/routes";
+import { config } from "./shared/config";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const refreshToken = request.cookies.get(JWTEnum.REFRESH_TOKEN)?.value;
+  const refreshToken = request.cookies.get(
+    config.auth.JWT.REFRESH_TOKEN
+  )?.value;
 
-  if (refreshToken && pathname === "/auth") {
-    return NextResponse.redirect(new URL("/home", request.url));
+  if (refreshToken && pathname === AUTH) {
+    return NextResponse.redirect(new URL(HOME, request.url));
   }
 
-  if (!refreshToken && pathname === "/home") {
-    return NextResponse.redirect(new URL("/auth", request.url));
+  if (!refreshToken && pathname === HOME) {
+    return NextResponse.redirect(new URL(AUTH, request.url));
   }
 
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: ["/auth", "/home"],
+export const middlewareConfig = {
+  matcher: [AUTH, HOME],
 };
