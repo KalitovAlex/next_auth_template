@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { authApi } from "@/features/auth/api";
 import { config } from "@/shared/config";
 import { SessionState } from "../types";
+import { sessionApi } from "../api";
 
 const getInitialAuthState = () => {
   if (typeof window === "undefined") return false;
@@ -26,7 +26,7 @@ export const useSessionStore = create<SessionState>((set) => ({
         throw new Error("No refresh token found");
       }
 
-      const data = await authApi.refreshToken();
+      const data = await sessionApi.refreshToken(refreshToken);
 
       if (data.refreshToken) {
         if (typeof window !== "undefined") {

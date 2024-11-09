@@ -1,68 +1,34 @@
 import { create } from "zustand";
-import { authApi } from "@/features/auth/api";
-import { config } from "@/shared/config";
 import { AuthState } from "../types";
-
-const getInitialAuthState = () => {
-  if (typeof window === "undefined") return false;
-  return !!localStorage.getItem(config.auth.JWT.REFRESH_TOKEN);
-};
+import { useSessionStore } from "@/entities/session";
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
-  isAuthenticated: getInitialAuthState(),
   error: null,
-  setIsAuthenticated: (value: boolean) => set({ isAuthenticated: value }),
 
-  refreshTokens: async () => {
+  login: async () => {
     try {
       set({ isLoading: true, error: null });
-      const refreshToken =
-        typeof window !== "undefined"
-          ? localStorage.getItem(config.auth.JWT.REFRESH_TOKEN)
-          : null;
-
-      if (!refreshToken) {
-        throw new Error("No refresh token found");
-      }
-
-      const data = await authApi.refreshToken();
-
-      if (data.refreshToken) {
-        if (typeof window !== "undefined") {
-          localStorage.setItem(
-            config.auth.JWT.REFRESH_TOKEN,
-            data.refreshToken
-          );
-        }
-        await fetch("/api/auth/set-token", {
-          method: "POST",
-          body: JSON.stringify({ token: data.refreshToken }),
-        });
-      }
-
-      set({ isAuthenticated: true });
-      return data;
+      const sessionStore = useSessionStore.getState();
+      await sessionStore.refreshTokens();
     } catch (error) {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
-      }
-      await fetch("/api/auth/remove-token", { method: "POST" });
-      set({
-        error: error as Error,
-        isAuthenticated: false,
-      });
+      set({ error: error as Error });
       throw error;
     } finally {
       set({ isLoading: false });
     }
   },
 
-  logout: async () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
+  register: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      const sessionStore = useSessionStore.getState();
+      await sessionStore.refreshTokens();
+    } catch (error) {
+      set({ error: error as Error });
+      throw error;
+    } finally {
+      set({ isLoading: false });
     }
-    await fetch("/api/auth/remove-token", { method: "POST" });
-    set({ isAuthenticated: false });
-  },
+  }
 }));

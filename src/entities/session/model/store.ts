@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { SessionState } from "../types";
-import { authApi } from "@/features/auth/api";
+import { sessionApi } from "../api";
 import { config } from "@/shared/config";
 
 const getInitialAuthState = () => {
@@ -17,7 +17,17 @@ export const useSessionStore = create<SessionState>((set) => ({
   refreshTokens: async () => {
     try {
       set({ isLoading: true, error: null });
-      const data = await authApi.refreshToken();
+
+      if (typeof window === "undefined") {
+        throw new Error("Cannot refresh token on server side");
+      }
+
+      const refreshToken = localStorage.getItem(config.auth.JWT.REFRESH_TOKEN);
+      if (!refreshToken) {
+        throw new Error("No refresh token found");
+      }
+
+      const data = await sessionApi.refreshToken(refreshToken);
 
       if (data.refreshToken) {
         localStorage.setItem(config.auth.JWT.REFRESH_TOKEN, data.refreshToken);
@@ -28,6 +38,7 @@ export const useSessionStore = create<SessionState>((set) => ({
       }
 
       set({ isAuthenticated: true });
+      return data;
     } catch (error) {
       localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
       await fetch("/api/auth/remove-token", { method: "POST" });
@@ -42,7 +53,9 @@ export const useSessionStore = create<SessionState>((set) => ({
   },
 
   logout: async () => {
-    localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(config.auth.JWT.REFRESH_TOKEN);
+    }
     await fetch("/api/auth/remove-token", { method: "POST" });
     set({ isAuthenticated: false });
   },

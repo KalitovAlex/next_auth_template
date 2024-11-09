@@ -12,6 +12,7 @@ import type {
   CrudOperations,
   CustomInterfacesConfig,
 } from "./types/index";
+import type { GeneratorConfig } from "./types/generator.types";
 import gradient from "gradient-string";
 
 const STRUCTURE_TYPES: StructureTypes = {
@@ -23,23 +24,6 @@ const LAYERS: Layers = {
   UI: "ui",
   MODEL: "model",
   API: "api",
-};
-
-type LayersConfig = {
-  layers: {
-    ui: boolean;
-    model: {
-      enabled: boolean;
-      store: boolean;
-      hook: boolean;
-    };
-    api: boolean;
-  };
-  api?: {
-    includeCrud: boolean;
-    selectedOperations?: CrudOperations;
-    customRoute?: string;
-  };
 };
 
 const baseTemplates: BaseTemplates = {
@@ -211,7 +195,7 @@ const baseTemplates: BaseTemplates = {
       "api/{{name}}-api.ts": (
         name: string,
         customInterfaces?: CustomInterfacesConfig,
-        config?: LayersConfig
+        config?: GeneratorConfig
       ): string => {
         const componentName = capitalize(name);
         const route = config?.api?.customRoute || name.toLowerCase();
@@ -438,18 +422,16 @@ const askStructureType = async (
 
 const getLayersConfig = async (
   rl: readline.Interface,
-  type: StructureType
-): Promise<LayersConfig> => {
-  const config: LayersConfig = {
+  type: StructureType,
+  name: string
+): Promise<GeneratorConfig> => {
+  const config: GeneratorConfig = {
     layers: {
       ui: false,
-      model: {
-        enabled: false,
-        store: false,
-        hook: false,
-      },
+      model: false,
       api: false,
     },
+    fileNames: {},
   };
 
   console.log(chalk.yellow("\n🗂  Select layers to generate:"));
@@ -461,9 +443,17 @@ const getLayersConfig = async (
 
   const includeModel = await askConfirmation(rl, "📊 Include Model layer?");
   if (includeModel) {
-    config.layers.model.enabled = true;
-    config.layers.model.store = await askConfirmation(rl, "📦 Include Store?");
-    config.layers.model.hook = await askConfirmation(rl, "🎣 Include Hook?");
+    config.layers.model = true;
+    const includeStore = await askConfirmation(rl, "📦 Include Store?");
+    const includeHook = await askConfirmation(rl, "🎣 Include Hook?");
+
+    if (includeModel) {
+      config.fileNames.model = {
+        types: `${name.toLowerCase()}-types`,
+        ...(includeStore && { store: `${name.toLowerCase()}-store` }),
+        ...(includeHook && { hook: `use-${name.toLowerCase()}` }),
+      };
+    }
   }
 
   config.layers.api = await askConfirmation(rl, "🔌 Include API layer?");
@@ -509,8 +499,24 @@ const getLayersConfig = async (
     }
   }
 
-  if (!config.layers.ui && !config.layers.model.enabled && !config.layers.api) {
+  if (!config.layers.ui && !config.layers.model && !config.layers.api) {
     throw new Error("At least one layer must be selected");
+  }
+
+  if (config.layers.ui) {
+    config.fileNames.ui = {
+      component: name.toLowerCase(),
+    };
+  }
+
+  if (config.layers.api) {
+    config.fileNames.api = {
+      service: `${name.toLowerCase()}-api`,
+      route: config.api?.customRoute || name.toLowerCase(),
+      includeCrud: config.api?.includeCrud || false,
+      selectedOperations: config.api?.selectedOperations,
+      useCustomTypes: true,
+    };
   }
 
   return config;
@@ -519,7 +525,7 @@ const getLayersConfig = async (
 const generateFiles = async (
   type: StructureType,
   name: string,
-  config: LayersConfig,
+  config: GeneratorConfig,
   customInterfaces: CustomInterfacesConfig
 ): Promise<void> => {
   const basePath = path.join(
@@ -550,7 +556,7 @@ const createStructure = (
   template: Record<string, TemplateFunction>,
   name: string,
   customInterfaces: CustomInterfacesConfig,
-  config?: LayersConfig
+  config?: GeneratorConfig
 ): void => {
   Object.entries(template).forEach(([filePath, contentFn]) => {
     const finalPath = filePath.replace(/{{name}}/g, name.toLowerCase());
@@ -616,7 +622,7 @@ async function generateStructure(): Promise<void> {
       return;
     }
 
-    const config = await getLayersConfig(rl, type);
+    const config = await getLayersConfig(rl, type, name);
     const customInterfaces = await askCustomInterfaces(rl, config.layers);
 
     spinner.start(chalk.blue(`🔨 Creating ${type} structure...`));
@@ -651,7 +657,7 @@ generateStructure().catch(console.error);
 
 const askCustomInterfaces = async (
   rl: readline.Interface,
-  layers: LayersConfig["layers"]
+  layers: GeneratorConfig["layers"]
 ): Promise<CustomInterfacesConfig> => {
   console.log(chalk.yellow("\n📘 Interface Configuration:"));
   console.log(chalk.dim("Select which interfaces you want to generate\n"));
@@ -669,16 +675,12 @@ const askCustomInterfaces = async (
     );
   }
 
-  if (layers.model.enabled) {
-    if (layers.model.store) {
-      config.state = await askConfirmation(
-        rl,
-        "📊 Generate State interface for Store?"
-      );
-    }
-    if (layers.model.hook) {
-      config.hook = await askConfirmation(rl, "🎣 Generate Hook interface?");
-    }
+  if (layers.model) {
+    config.state = await askConfirmation(
+      rl,
+      "📊 Generate State interface for Store?"
+    );
+    config.hook = await askConfirmation(rl, "🎣 Generate Hook interface?");
   }
 
   return config;
